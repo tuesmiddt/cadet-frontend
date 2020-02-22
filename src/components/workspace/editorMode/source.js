@@ -553,6 +553,20 @@ function _SourceHighlightRules(acequire, exports, module) {
     exports.SourceHighlightRules = SourceHighlightRules;
 }
 
+let autocompleter = {
+    getCompletions: function(editor, session, pos, prefix, callback) {
+        console.log(pos); // Cursor col is insertion location i.e. last char col + 1
+        var wordList = ["foo", "bar", "baz"];
+        callback(null, wordList.map(function(word) {
+            return {
+                caption: word,
+                value: word,
+                meta: "function",
+                docHTML: "hello world! " + word,
+            };
+        }));
+    },
+  };
 
 
 function _Mode(acequire, exports, module) {
@@ -565,6 +579,8 @@ function _Mode(acequire, exports, module) {
     var WorkerClient = acequire("../worker/worker_client").WorkerClient;
     var CstyleBehaviour = acequire("./behaviour/cstyle").CstyleBehaviour;
     var CStyleFoldMode = acequire("./folding/cstyle").FoldMode;
+    // To only use our suggestions
+    acequire('ace/ext/language_tools').setCompleters([autocompleter]);
 
     class Mode {
         constructor() {
@@ -572,6 +588,8 @@ function _Mode(acequire, exports, module) {
             this.$outdent = new MatchingBraceOutdent();
             this.$behaviour = new CstyleBehaviour();
             this.foldingRules = new CStyleFoldMode();
+            // If we want to enable autocompletion of all local names
+            // this.completer = autocompleter;
         }
     }
     oop.inherits(Mode, TextMode);
