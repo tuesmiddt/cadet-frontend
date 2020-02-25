@@ -99,6 +99,7 @@ export type DispatchProps = {
   handleDebuggerReset: () => void;
   handleUpdateCurrentAssessmentId: (assessmentId: number, questionId: number) => void;
   handleUpdateHasUnsavedChanges: (hasUnsavedChanges: boolean) => void;
+  handlePromptAutocomplete: (row: number, col: number, callback: any) => void;
 };
 
 interface IState {
@@ -177,6 +178,7 @@ class AssessmentWorkspace extends React.Component<AssessmentWorkspaceProps, ISta
               highlightedLines: this.props.highlightedLines,
               handleEditorUpdateBreakpoints: this.props.handleEditorUpdateBreakpoints,
               handleUpdateHasUnsavedChanges: this.props.handleUpdateHasUnsavedChanges,
+              handlePromptAutocomplete: this.props.handlePromptAutocomplete,
               isEditorAutorun: false
             }
           : undefined,

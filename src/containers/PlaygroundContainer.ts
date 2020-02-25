@@ -22,6 +22,7 @@ import {
   generateLzString,
   initInvite,
   invalidEditorSessionId,
+  promptAutocomplete,
   setEditorBreakpoint,
   setEditorSessionId,
   setWebsocketStatus,
@@ -99,7 +100,9 @@ const mapDispatchToProps: MapDispatchToProps<IDispatchProps, {}> = (dispatch: Di
       handleUsingSubst: (usingSubst: boolean) => toggleUsingSubst(usingSubst),
       handleDebuggerPause: () => beginDebuggerPause(workspaceLocation),
       handleDebuggerResume: () => debuggerResume(workspaceLocation),
-      handleDebuggerReset: () => debuggerReset(workspaceLocation)
+      handleDebuggerReset: () => debuggerReset(workspaceLocation),
+      handlePromptAutocomplete: (row: number, col: number, callback: any) =>
+        promptAutocomplete(workspaceLocation, row, col, callback)
     },
     dispatch
   );

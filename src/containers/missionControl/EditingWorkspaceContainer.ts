@@ -17,6 +17,7 @@ import {
   evalEditor,
   evalRepl,
   evalTestcase,
+  promptAutocomplete,
   setEditorBreakpoint,
   submitAnswer,
   updateEditorValue,
@@ -90,7 +91,9 @@ const mapDispatchToProps: MapDispatchToProps<DispatchProps, {}> = (dispatch: Dis
       handleUpdateCurrentAssessmentId: updateCurrentAssessmentId,
       handleDebuggerPause: () => beginDebuggerPause(workspaceLocation),
       handleDebuggerResume: () => debuggerResume(workspaceLocation),
-      handleDebuggerReset: () => debuggerReset(workspaceLocation)
+      handleDebuggerReset: () => debuggerReset(workspaceLocation),
+      handlePromptAutocomplete: (row: number, col: number, callback: any) =>
+        promptAutocomplete(workspaceLocation, row, col, callback)
     },
     dispatch
   );

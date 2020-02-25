@@ -3,6 +3,7 @@ import AceEditor, { Annotation } from 'react-ace';
 import { HotKeys } from 'react-hotkeys';
 import sharedbAce from 'sharedb-ace';
 
+import { acequire } from 'brace';
 import 'brace/ext/language_tools';
 import 'brace/ext/searchbox';
 import './editorMode/source';
@@ -29,8 +30,17 @@ export interface IEditorProps {
   handleEditorValueChange: (newCode: string) => void;
   handleEditorUpdateBreakpoints: (breakpoints: string[]) => void;
   handleFinishInvite?: () => void;
+  handlePromptAutocomplete: (row: number, col: number, callback: any) => void;
   handleSetWebsocketStatus?: (websocketStatus: number) => void;
   handleUpdateHasUnsavedChanges?: (hasUnsavedChanges: boolean) => void;
+}
+
+export interface IAutocompletionResult {
+  caption: string;
+  value: string;
+  meta?: string;
+  docHTML?: string;
+  score?: number;
 }
 
 class Editor extends React.PureComponent<IEditorProps, {}> {
@@ -38,6 +48,7 @@ class Editor extends React.PureComponent<IEditorProps, {}> {
   public AceEditor: React.RefObject<AceEditor>;
   private onChangeMethod: (newCode: string) => void;
   private onValidateMethod: (annotations: Annotation[]) => void;
+  private completer: {};
 
   constructor(props: IEditorProps) {
     super(props);
@@ -52,6 +63,13 @@ class Editor extends React.PureComponent<IEditorProps, {}> {
     this.onValidateMethod = (annotations: Annotation[]) => {
       if (this.props.isEditorAutorun && annotations.length === 0) {
         this.props.handleEditorEval();
+      }
+    };
+
+    this.completer = {
+      getCompletions: (editor: any, session: any, pos: any, prefix: any, callback: any) => {
+        // console.log(pos); // Cursor col is insertion location i.e. last char col + 1
+        this.props.handlePromptAutocomplete(pos.row, pos.column, callback);
       }
     };
   }
@@ -97,6 +115,9 @@ class Editor extends React.PureComponent<IEditorProps, {}> {
 
     // Change all info annotations to error annotations
     session.on('changeAnnotation', this.handleAnnotationChange(session));
+
+    // Start autocompletion
+    acequire('ace/ext/language_tools').setCompleters([this.completer]);
 
     // Has session ID
     if (this.props.editorSessionId !== '') {

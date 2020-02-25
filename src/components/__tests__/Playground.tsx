@@ -52,7 +52,8 @@ const baseProps = {
   handleUsingSubst: (usingSubst: boolean) => {},
   handleDebuggerPause: () => {},
   handleDebuggerResume: () => {},
-  handleDebuggerReset: () => {}
+  handleDebuggerReset: () => {},
+  handlePromptAutocomplete: (row: number, col: number, callback: any) => {}
 };
 
 const testValueProps: IPlaygroundProps = {

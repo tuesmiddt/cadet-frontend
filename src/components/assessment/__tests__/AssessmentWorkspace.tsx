@@ -43,6 +43,7 @@ const defaultProps: AssessmentWorkspaceProps = {
   handleDebuggerPause: () => {},
   handleDebuggerResume: () => {},
   handleDebuggerReset: () => {},
+  handlePromptAutocomplete: (row: number, col: number, callback: any) => {},
   isRunning: false,
   isDebugging: false,
   enableDebugging: false,
