@@ -27,6 +27,15 @@ import {
   visualiseEnv
 } from '../utils/slangHelper';
 
+function getNamesStub(row: number, col: number, prog: string): any {
+  // console.log(row, col, JSON.stringify(prog));
+  return [
+    { name: 'foo', meta: 'function' },
+    { name: 'bar', meta: 'const' },
+    { name: 'baz', meta: 'let' }
+  ];
+}
+
 let breakpoints: string[] = [];
 export default function* workspaceSaga(): SagaIterator {
   let context: Context;
@@ -94,6 +103,47 @@ export default function* workspaceSaga(): SagaIterator {
     }
 
     yield* evalCode(value, context, execTime, workspaceLocation, actionTypes.EVAL_EDITOR);
+  });
+
+  yield takeEvery(actionTypes.PROMPT_AUTOCOMPLETE, function*(
+    action: ReturnType<typeof actions.promptAutocomplete>
+  ) {
+    const workspaceLocation = action.payload.workspaceLocation;
+
+    // context = yield select(
+    //   (state: IState) => (state.workspaces[workspaceLocation] as IWorkspaceState).context
+    // );
+
+    // console.log(context);
+
+    const code: string = yield select(
+      (state: IState) => (state.workspaces[workspaceLocation] as IWorkspaceState).editorValue!
+    );
+    const editorSuggestions: any = yield call(
+      getNamesStub,
+      action.payload.row,
+      action.payload.column,
+      code
+    );
+    const symbols: string[] = yield select(
+      (state: IState) =>
+        (state.workspaces[workspaceLocation] as IWorkspaceState).context.externalSymbols
+    );
+    const symbolSuggestions: any = symbols.map((symbol: string) => ({
+      name: symbol,
+      meta: 'const'
+    }));
+
+    yield call(
+      action.payload.callback,
+      null,
+      editorSuggestions.concat(symbolSuggestions).map((suggestion: any) => ({
+        caption: suggestion.name,
+        value: suggestion.name,
+        meta: suggestion.meta,
+        docHTML: 'hello world! ' + suggestion.name
+      }))
+    );
   });
 
   yield takeEvery(actionTypes.TOGGLE_EDITOR_AUTORUN, function*(
