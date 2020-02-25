@@ -13,6 +13,7 @@ import {
   TestcaseType,
   TestcaseTypes
 } from '../components/assessment/assessmentShape';
+import { Documentation } from '../reducers/documentation';
 import { externalLibraries } from '../reducers/externalLibraries';
 import { IPlaygroundState, IState, IWorkspaceState, SideContentType } from '../reducers/states';
 import { showSuccessMessage, showWarningMessage } from '../utils/notification';
@@ -28,7 +29,7 @@ import {
 } from '../utils/slangHelper';
 
 function getNamesStub(row: number, col: number, prog: string): any {
-  // console.log(row, col, JSON.stringify(prog));
+  // console.log(row, col, JSON.stringify(prog));ll
   return [
     { name: 'foo', meta: 'function' },
     { name: 'bar', meta: 'const' },
@@ -110,39 +111,38 @@ export default function* workspaceSaga(): SagaIterator {
   ) {
     const workspaceLocation = action.payload.workspaceLocation;
 
-    // context = yield select(
-    //   (state: IState) => (state.workspaces[workspaceLocation] as IWorkspaceState).context
-    // );
-
-    // console.log(context);
+    context = yield select(
+      (state: IState) => (state.workspaces[workspaceLocation] as IWorkspaceState).context
+    );
 
     const code: string = yield select(
       (state: IState) => (state.workspaces[workspaceLocation] as IWorkspaceState).editorValue!
     );
-    const editorSuggestions: any = yield call(
+    const editorNames: any = yield call(
       getNamesStub,
       action.payload.row,
       action.payload.column,
       code
     );
-    const symbols: string[] = yield select(
-      (state: IState) =>
-        (state.workspaces[workspaceLocation] as IWorkspaceState).context.externalSymbols
-    );
-    const symbolSuggestions: any = symbols.map((symbol: string) => ({
-      name: symbol,
-      meta: 'const'
+
+    const editorSuggestions = editorNames.map((name: any) => ({
+      caption: name.name,
+      value: name.name,
+      meta: name.meta
     }));
+
+    const builtinSuggestions = Documentation.builtins[context.chapter] || [];
+
+    const extLib = yield select(
+      (state: IState) => (state.workspaces[workspaceLocation] as IWorkspaceState).externalLibrary
+    );
+
+    const extLibSuggestions = Documentation.externalLibraries[extLib] || [];
 
     yield call(
       action.payload.callback,
       null,
-      editorSuggestions.concat(symbolSuggestions).map((suggestion: any) => ({
-        caption: suggestion.name,
-        value: suggestion.name,
-        meta: suggestion.meta,
-        docHTML: 'hello world! ' + suggestion.name
-      }))
+      editorSuggestions.concat(builtinSuggestions, extLibSuggestions)
     );
   });
 
