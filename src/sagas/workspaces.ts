@@ -27,6 +27,7 @@ import {
   makeElevatedContext,
   visualiseEnv
 } from '../utils/slangHelper';
+// import { getNames } from 'js-slang';
 
 function getNamesStub(row: number, col: number, prog: string): any {
   // console.log(row, col, JSON.stringify(prog));ll
