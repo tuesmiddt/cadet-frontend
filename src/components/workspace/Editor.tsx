@@ -3,6 +3,7 @@ import AceEditor, { IAnnotation } from 'react-ace';
 import { HotKeys } from 'react-hotkeys';
 import sharedbAce from 'sharedb-ace';
 
+import { require as acequire } from 'ace-builds';
 import 'ace-builds/src-noconflict/ext-language_tools';
 import 'ace-builds/src-noconflict/ext-searchbox';
 import { createContext, getAllOccurrencesInScope } from 'js-slang';
@@ -11,8 +12,6 @@ import 'js-slang/dist/editors/ace/theme/source';
 import { LINKS } from '../../utils/constants';
 import AceRange from './AceRange';
 import { checkSessionIdExists } from './collabEditing/helper';
-import { require as acequire } from 'ace-builds'
-
 
 /**
  * @property editorValue - The string content of the react-ace editor
@@ -402,7 +401,7 @@ class Editor extends React.PureComponent<IEditorProps, {}> {
       }
       checkSessionIdExists(
         this.props.editorSessionId,
-        () => { },
+        () => {},
         sessionIdNotFound,
         cannotReachServer
       );
@@ -421,7 +420,7 @@ class Editor extends React.PureComponent<IEditorProps, {}> {
 
 /* Override handler, so does not trigger when focus is in editor */
 const handlers = {
-  goGreen: () => { }
+  goGreen: () => {}
 };
 
 export default Editor;

@@ -3,7 +3,7 @@ import { externalLibraries } from './externalLibraries';
 
 const externalLibrariesDocumentation = {};
 
-const MAX_CAPTION_LENGTH = 20;
+const MAX_CAPTION_LENGTH = 25;
 
 function shortenCaption(name: string): string {
   if (name.length <= MAX_CAPTION_LENGTH) {
